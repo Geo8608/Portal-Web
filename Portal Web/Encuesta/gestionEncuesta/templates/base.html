@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="es">
+
+{% load static%}
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <title>HTML Education Template</title>
+
+
+    <!-- Google font -->
+    <link href="https://fonts.googleapis.com/css?family=Lato:700%7CMontserrat:400,600" rel="stylesheet">
+
+    <!-- Bootstrap -->
+    <link type="text/css" rel="stylesheet" href="{% static 'gestionEncuesta/css/bootstrap.min.css' %} " />
+
+    <!-- Font Awesome Icon -->
+    <link rel="stylesheet" href="{% static 'gestionEncuesta/css/font-awesome.min.css' %} ">
+
+    <!-- Custom stylesheet -->
+    <link type="text/css" rel="stylesheet" href="{% static 'gestionEncuesta/css/style.css' %} " />
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+			<![endif]-->
+
+</head>
+
+<style>
+    .jumbotron {
+        padding-left: 2em;
+        padding-right: 2em;
+        display: grid;
+    }
+    /*Header*/
+    
+    .container {
+        margin-top: 70px;
+        text-align: center;
+    }
+    /* Grid para el juego de los sinonimos que separa el modal
+	  en 4 x 2 para poder emparejar a 4 palabras con sus sinionimos*/
+    
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 15px;
+    }
+    /* Grid para las encuestas formado por:
+	  Una parte superior del modal entero.
+	  Una caja grande para el textro y otra pequeña
+	  4 cajas pequeñas para las opciones*/
+    
+    .grid2 {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-gap: 10px;
+    }
+    
+    .span-col-4 {
+        grid-column: span 4 / auto;
+    }
+    
+    .span-col-3 {
+        grid-column: span 3 / auto;
+    }
+    /* FIN Grid 2*/
+    /* GRID3 -  definir una palabra*/
+    
+    .grid3 {
+        display: grid;
+        grid-template-rows: max-content;
+        grid-template-columns: repeat(1, 1fr);
+        grid-gap: 10px;
+    }
+    /* GRID3 -  definir una palabra*/
+    
+    .grid4 {
+        display: grid;
+        grid-template-columns: auto;
+        grid-template-rows: max-content;
+        grid-gap: 10px;
+    }
+    
+    .auto-fill {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+    
+    .auto-fit {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+    
+    .wrapper {
+        display: grid;
+        grid-gap: 10px;
+        grid-template-columns: [col] auto [col] auto [col] auto [col] auto;
+        grid-template-rows: [row] auto [row] auto [row];
+    }
+    
+    .box {
+        border-radius: 5px;
+        padding: 20px;
+        font-size: 100%;
+    }
+    
+    .a {
+        grid-column: col / span 2;
+        grid-row: row;
+    }
+    
+    .b {
+        grid-column: col 3 / span 2;
+        grid-row: row;
+    }
+    
+    .c {
+        grid-column: col;
+        grid-row: row 2;
+    }
+    
+    .d {
+        grid-column: col 2 / span 3;
+        grid-row: row 2;
+    }
+    
+    .e {
+        grid-column: col / span 4;
+        grid-row: row 3;
+    }
+</style>
+
+<body class="body2">
+
+    <!-- Header -->
+    <header id="header" class="transparent-nav">
+        <div class="container">
+
+            <div class="navbar-header">
+                <!-- Logo -->
+                <div class="navbar-brand">
+                    <a class="logo" href="{% url 'index' %}">
+                        <img src="{% static 'gestionEncuesta/img/logo-alt.png' %}" alt="logo">
+                    </a>
+                </div>
+                <!-- /Logo -->
+
+                <!-- Mobile toggle -->
+                <button class="navbar-toggle">
+						<span></span>
+					</button>
+                <!-- /Mobile toggle -->
+            </div>
+
+            <!-- Navigation -->
+            <nav id="nav">
+                <ul class="main-menu nav navbar-nav navbar-right">
+                    <li><a href="{% url 'index' %}" style="color: black;">Home</a></li>
+                    <li><a href="{% url 'about' %}" style="color: black;">About</a></li>
+                </ul>
+            </nav>
+            <!-- /Navigation -->
+
+        </div>
+    </header>
+    <!-- /Header -->
+
+    <!-- Home -->
+    <div id="home" class="hero-area">
+
+        <!-- Backgound Image -->
+        <div class="bg-image bg-parallax overlay" style="background-image:url( {% static 'gestionEncuesta/img/home-background.jpg' %} ) "></div>
+        <!-- /Backgound Image -->
+
+
+        <div class="main">
+            <div class="modal-body">
+                <div class="jumbotron">
+                    <form method="GET" action="{% url 'thanks' %}">
+                        {% csrf_token %}
+                        <div class="grid4">
+                            <h4 align="center">Para salir de la encuesta una vez la haya finalizado pulse el boton de salir </h4>
+                            <button type="submit" class="btn btn-warning js-btn-step" name="salir"> Salir </button>
+                        </div>
+                    </form>
+                </div>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="jumbotron">
+                        <!-- Paso 1 Creación del perfil -->
+                        <h3 align="left"> <strong> Creación de perfil </strong></h3>
+                        <div class="grid4" align="left">
+                            <h5>¿Con qué género te identificas más?</h5>
+                            <select name="genero">
+                                <option value="mujer">Femenino</option>
+                                <option value="hombre">Masculino</option>
+                                <option value="neutro">Preferiría no contestar</option>
+                            </select>
+                            <h5> ¿Cuál es tu grupo de edad?</h5>
+                            <select name="edad">
+                                <option value="menores">17 o menos</option>
+                                <option value="jovenes">Entre 18 y 30</option>
+                                <option value="adultos">Entre 31 y 45</option>
+                                <option value="adultos_2">Entre 46 y 64</option>
+                                <option value="mayores">65 o más</option>
+                            </select>
+                            <h5> Nos indicaría su nacionalidad </h5>
+                            <select name="nacionalidad">
+                                <option value="espanya">España</option>
+                                <option value="español">País de habla hispana</option>
+                                <option value="resto">Resto del Mundo</option>
+                            </select>
+                            <h5> ¿Cuál de estas opciones te describiría mejor?</h5>
+                            <select name="rasgo">
+                                <option value="africa">Afroamericano</option>
+                                <option value="asia">Asiatico</option>
+                                <option value="america">Americano</option>
+                                <option value="sud_america">Latino</option>
+                                <option value="europeo">Europeo</option>
+                                <option value="otros">Otros</option>
+                            </select>
+                            <h5>Comunidad autonoma en la que nació</h5>
+                            <select name="com_nacimiento">
+                                <option value="andalucia">Andalucia</option>
+                                <option value="aragon">Aragón</option>
+                                <option value="asturias">Asturias</option>
+                                <option value="baleares">Baleares</option>
+                                <option value="canarias">Canarias</option>
+                                <option value="cantabria">Cantabria</option>
+                                <option value="mancha">Castilla La Mancha</option>
+                                <option value="leon">Castilla y Leon</option>
+                                <option value="cataluña">Cataluña</option>
+                                <option value="madrid">Comunidad de Madrid</option>
+                                <option value="valenciana">Comunidad Valenciana</option>
+                                <option value="extramadura">Extramadura</option>
+                                <option value="galicia">Galicia</option>
+                                <option value="rioja">La Rioja</option>
+                                <option value="murcia">Murcia</option>
+                                <option value="navarra">Navarra</option>
+                                <option value="vasco">País Vasco</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                            <h5>Comunidad autónoma en la que reside actualmente</h5>
+                            <select name="com_actual">
+                                <option value="andalucia">Andalucia</option>
+                                <option value="aragon">Aragón</option>
+                                <option value="asturias">Asturias</option>
+                                <option value="baleares">Baleares</option>
+                                <option value="canarias">Canarias</option>
+                                <option value="cantabria">Cantabria</option>
+                                <option value="mancha">Castilla La Mancha</option>
+                                <option value="leon">Castilla y Leon</option>
+                                <option value="cataluña">Cataluña</option>
+                                <option value="madrid">Comunidad de Madrid</option>
+                                <option value="valenciana">Comunidad Valenciana</option>
+                                <option value="extramadura">Extramadura</option>
+                                <option value="galicia">Galicia</option>
+                                <option value="rioja">La Rioja</option>
+                                <option value="murcia">Murcia</option>
+                                <option value="navarra">Navarra</option>
+                                <option value="vasco">País Vasco</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                            <h5> ¿Cuantos años lleva en la comunidad autónoma actual?</h5>
+                            <select name="anyos_actual">
+                                <option value="menores">1 año o menos</option>
+                                <option value="jovenes">Entre 1 y 5 años</option>
+                                <option value="adultos">Entre 5 y 10 años</option>
+                                <option value="mayores">Más de 10 años</option>
+                            </select>
+                            <h5> ¿ A qué se dedica?</h5>
+                            <select name="profesion">
+                                <option value="a">Consultor</option>
+                                <option value="b">Sector B</option>
+                                <option value="c">Sector C</option>
+                                <option value="d">Sector N</option>
+                            </select>
+                            <h5>¿Cuál es su renta anual familiar?</h5>
+                            <select name="renta">
+                                <option value="Baja">Inferior a 12500€</option>
+                                <option value="Medio Baja">Entre 12501 y 18000€</option>
+                                <option value="Media">Entre 18001 y 30000€</option>
+                                <option value="Media Alta">Entre 30001 y 50000€</option>
+                                <option value="Alta">Superior a 50001€</option>
+                            </select>
+                            <h5>¿Cuál es el nivel de educación más alto que obtuvo?</h5>
+                            <select name="estudios">
+                                <option value="Bajo">Sin estudios</option>
+                                <option value="Medio Bajo">Primaria</option>
+                                <option value="Medio">Secundaria</option>
+                                <option value="Medio Alto">Bachiller/Formación Profesional</option>
+                                <option value="Alto">Diploma Universitario</option>
+                            </select>
+                            <h5> En los últimos 12 meses, ¿cuántas veces ha visitado un museo, ha ido a una obra teatral?</h5>
+                            <select name="cultura"> 
+                                <option value="nunca">No he tenido tiempo</option>
+                                <option value="casi_nunca">Casi no he tenido tiempo</option>
+                                <option value="alguna_vez">He podido encontrar hueco en 4-5 ocasiones</option>
+                                <option value="varias_veces">He podido disfrutar casi todos los meses de alguna obra/exposición/etc.</option>
+                                <option value="muchas_veces">He podido ir todos los meses</option>
+                            </select>
+                            <h5> ¿Con qué frecuencia lee libros?</h5>
+                            <select name="frecuencia_libros"> 
+                                <option value="nunca">Nunca</option>
+                                <option value="anual">Alguna vez al año</option>
+                                <option value="mensual">Alguna vez al mes</option>
+                                <option value="semanal">Alguna vez a la semana</option>
+                                <option value="diariamente">Diariamente</option>
+                            </select>
+                            <div class="wrapper">
+                                <div class="box a">
+                                    <a> <strong> ¿Qué tipo de libros lee? </strong> </a>
+                                    <h6>Libros infantiles </h6>
+                                    <h6>Libros juveniles </h6>
+                                    <h6>Textos educativos </h6>
+                                    <h6>Cientificos/técnicos/profesionales </h6>
+                                    <h6>Historia/política y sociales </h6>
+                                    <h6>Literatura</h6>
+                                    <h6>Religión </h6>
+                                    <h6>Superación personal/autoayuda </h6>
+                                    <h6>Otros</h6>
+                                </div>
+                                <div class="box b">
+                                    <div class="wrapper">
+                                        <div align="center" class="box a">
+                                            <h5>Impreso </h5>
+                                            <input type="checkbox" id="impreso_infantil" name="libros_impresos" value="impreso_infantil" for="impreso_infantil"> <br>
+                                            <input type="checkbox" id="impreso_juvenil" name="libros_impresos" value="impreso_juvenil" for="impreso_juvenil"> <br>
+                                            <input type="checkbox" id="impreso_educativo" name="libros_impresos" value="impreso_educativo" for="impreso_educativo"> <br>
+                                            <input type="checkbox" id="impreso_cientifico" name="libros_impresos" value="impreso_cientifico" for="impreso_cientifico"> <br>
+                                            <input type="checkbox" id="impreso_historia" name="libros_impresos" value="impreso_historia" for="impreso_historia"> <br>
+                                            <input type="checkbox" id="impreso_literatura" name="libros_impresos" value="impreso_literatura" for="impreso_literatura"> <br>
+                                            <input type="checkbox" id="impreso_religion" name="libros_impresos" value="impreso_religion" for="impreso_religion"> <br>
+                                            <input type="checkbox" id="impreso_superacion" name="libros_impresos" value="impreso_superacion" for="impreso_superacion"> <br>
+                                            <input type="checkbox" id="impreso_otros" name="libros_impresos" value="impreso_otros" for="impreso_otros"> <br>
+                                        </div>
+                                        <div align="center" class="box b">
+                                            <h5> Digital </h5>
+                                            <input type="checkbox" id="digital_infantil" name="libros_digital" value="digital_infantil" for="digital_infantil"> <br>
+                                            <input type="checkbox" id="digital_juvenil" name="libros_digital" value="digital_juvenil" for="digital_juvenil"> <br>
+                                            <input type="checkbox" id="digital_educativo" name="libros_digital" value="digital_educativo" for="digital_educativo"> <br>
+                                            <input type="checkbox" id="digital_cientifico" name="libros_digital" value="digital_cientifico" for="digital_cientifico"> <br>
+                                            <input type="checkbox" id="digital_historia" name="libros_digital" value="digital_historia" for="digital_historia"> <br>
+                                            <input type="checkbox" id="digital_literatura" name="libros_digital" value="digital_literatura" for="digital_literatura"> <br>
+                                            <input type="checkbox" id="digital_religion" name="libros_digital" value="digital_religion" for="digital_religion"> <br>
+                                            <input type="checkbox" id="digital_superacion" name="libros_digital" value="digital_superacion" for="digital_superacion"> <br>
+                                            <input type="checkbox" id="digital_otros" name="libros_digital" value="digital_otros" for="digital_otros"> <br>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h5> <strong> ¿Para qué utiliza Internet? </strong> </h5>
+                                <input type="checkbox" id="estudio" name="uso_internet" value="estudio" for="estudio"> Estudios <br>
+                                <input type="checkbox" id="trabajo" name="uso_internet" value="trabajo" for="trabajo"> Trabajo <br>
+                                <input type="checkbox" id="compra" name="uso_internet" value="compra" for="compra"> Compras online <br>
+                                <input type="checkbox" id="asesoria" name="uso_internet" value="asesoria" for="asesoria"> Asesoria <br>
+                                <input type="checkbox" id="comunicacion" name="uso_internet" value="comunicacion" for="comunicacion"> Comunicación <br>
+                                <input type="checkbox" id="ocio" name="uso_internet" value="ocio" for="ocio"> Ocio <br>
+                                <input type="checkbox" id="otros" name="uso_internet" value="otros" for="otros"> Otros <br>
+                            </div>
+                            <div>
+                                <h5> <strong> En caso de que siga estudiando, ¿cuántas horas al día dedica al estudio online? </strong> </h5>
+                                <input type="radio" id="no_estudio" name="horas_estudio" value="no_estudio" for="no_estudio"> Ya no estudio <br>
+                                <input type="radio" id="poco" name="horas_estudio" value="poco" for="poco"> Menos de 1 hora <br>
+                                <input type="radio" id="medio" name="horas_estudio" value="medio" for="medio"> Entre 1 y 2 horas <br>
+                                <input type="radio" id="alto" name="horas_estudio" value="alto" for="alto"> Más de 2 horas <br>
+                            </div>
+                            <div>
+                                <h5> <strong> Al cabo de un mes, ¿cuántas compras hace por internet? </strong> </h5>
+                                <input type="radio" id="compra_int_0" name="compra_int" value="ninguna"> Ninguna <br>
+                                <input type="radio" id="compra_int_1" name="compra_int" value="pocas"> Al menos 1 <br>
+                                <input type="radio" id="compra_int_2" name="compra_int" value="algunas_pocas"> Al menos 2 <br>
+                                <input type="radio" id="compra_int_3" name="compra_int" value="algunas"> Al menos 3 <br>
+                                <input type="radio" id="compra_int_4" name="compra_int" value="muchas"> Más de 3 <br>
+                            </div>
+                            <div>
+                                <h5> <strong> ¿Tiene el DNI electrónico? </strong> </h5>
+                                <input type="radio" id="dni_si" name="dni" value="si" for="si"> Si <br>
+                                <input type="radio" id="dni_no" name="dni" value="no" for="no"> No <br>
+                            </div>
+                            <div>
+                                <h5> <strong> ¿Hace la declaración de la renta/modelo 100(autónomos) online? </strong> </h5>
+                                <input type="radio" id="declaracion_si" name="declaracion" value="si" for="si"> Si <br>
+                                <input type="radio" id="declaracion_no" name="declaracion" value="no" for="no"> No <br>
+                            </div>
+                            <div>
+                                <h5> <strong> ¿Lee las noticias, blog especializados, revistas online? </strong> </h5>
+                                <input type="radio" id="noticias_si" name="blogs" value="si" for="si"> Si <br>
+                                <input type="radio" id="noticias_no" name="blogs" value="no" for="no"> No <br>
+                            </div>
+                            <div>
+                                <h5> <strong> ¿Cómo suele pasar sus horas de ocio en la red? </strong> </h5>
+                                <input type="checkbox" id="series" name="ocio_red" value="series"> Series y/o películas <br>
+                                <input type="checkbox" id="musica" name="ocio_red" value="musica"> Música y/o Videos <br>
+                                <input type="checkbox" id="redes" name="ocio_red" value="redes"> Redes Sociales <br>
+                                <input type="checkbox" id="juegos" name="ocio_red" value="juegos"> Juegos online <br>
+                            </div>
+                            <div>
+                                <h5> <strong> ¿Cuántas horas de ocio suele pasar en la red? </strong> </h5>
+                                <input type="radio" id="horas_0" name="horas_red" value="muy_poco"> Menos de 1 hora<br>
+                                <input type="radio" id="horas_1" name="horas_red" value="poco"> Entre 1 y 2 horas <br>
+                                <input type="radio" id="horas_2" name="horas_red" value="algo"> Entre 2 y 3 horas<br>
+                                <input type="radio" id="horas_3" name="horas_red" value="algunas"> Entre 3 y 4 horas <br>
+                                <input type="radio" id="horas_4" name="horas_red" value="muchas"> más de 4 horas <br>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Fin Paso 1 -->
+                    <div class="jumbotron">
+                        <!-- Inicio Encuesta Pregunta nivel 1 -->
+                        <h3> <strong> <center> Comienzo Encuesta </center> </strong></h3>
+                        <h4 align="left"> <strong> Pregunta 1 </strong></h4>
+                        <div class="grid4">
+                            <div class="jumbotron">
+                                <div class="grid2">
+                                    {% if nivel1.tipo == "Clasica" %}
+                                    <div class="span-col-4"> <strong> {{ nivel1.pregunta }} </strong> </div>
+                                    <div class="span-col-4">{{ nivel1.texto}}</div>
+                                    <div>
+                                        <input type="radio" id="opcion1" name="nivel1" value="opcion1">
+                                        <label for="opcion1">{{ nivel1.opcion1}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion2" name="nivel1" value="opcion2">
+                                        <label for="opcion2">{{ nivel1.opcion2}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion3" name="nivel1" value="opcion3">
+                                        <label for="opcion3">{{ nivel1.opcion3}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion4" name="nivel1" value="opcion4">
+                                        <label for="opcion4">{{ nivel1.opcion4}}</label>
+                                    </div>
+                                    {% elif nivel1.tipo == "Booleana" %}
+                                    <div class="span-col-4"> <strong> {{ nivel1.pregunta }} </strong> </div>
+                                    <div class="span-col-4">{{ nivel1.texto}}</div>
+                                    <div>
+                                        <input type="radio" id="True" name="nivel1" value="True">
+                                        <label for="True">{{ nivel1.opcion1}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="False" name="nivel1" value="False">
+                                        <label for="False">{{ nivel1.opcion2}}</label>
+                                    </div>
+
+                                    {% elif nivel1.tipo == "Rellenar" %}
+                                    <div class="span-col-4"> <strong> {{ nivel1.pregunta }} </strong> </div>
+                                    <div class="span-col-4">{{ nivel1.texto}}</div>
+                                    <div>
+                                        <input type="radio" id="opcion1" name="nivel1" value="opcion1">
+                                        <label for="opcion1">{{ nivel1.opcion1}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion2" name="nivel1" value="opcion2">
+                                        <label for="opcion2">{{ nivel1.opcion2}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion3" name="nivel1" value="opcion3">
+                                        <label for="opcion3">{{ nivel1.opcion3}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion4" name="nivel1" value="opcion4">
+                                        <label for="opcion4">{{ nivel1.opcion4}}</label>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Fin Pregunta nivel 1 -->
+
+                        <!-- Pregunta 2 -->
+                        <h4 align="left"> <strong> Pregunta 2 </strong></h4>
+                        <div class="grid4">
+                            <div class="jumbotron">
+                                <div class="grid2">
+                                    {% if nivel2.tipo == "Clasica" %}
+                                    <div class="span-col-4"> <strong> {{ nivel2.pregunta }} </strong> </div>
+                                    <div class="span-col-4">{{ nivel2.texto}}</div>
+                                    <div>
+                                        <input type="radio" id="opcion1" name="nivel2" value="opcion1">
+                                        <label for="opcion1">{{ nivel2.opcion1}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion2" name="nivel2" value="opcion2">
+                                        <label for="opcion2">{{ nivel2.opcion2}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion3" name="nivel2" value="opcion3">
+                                        <label for="opcion3">{{ nivel2.opcion3}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion4" name="nivel2" value="opcion4">
+                                        <label for="opcion4">{{ nivel2.opcion4}}</label>
+                                    </div>
+                                    {% elif nivel2.tipo == "Booleana" %}
+                                    <div class="span-col-4"> <strong> {{ nivel2.pregunta }} </strong> </div>
+                                    <div class="span-col-4">{{ nivel2.texto}}</div>
+                                    <div>
+                                        <input type="radio" id="True" name="nivel2" value="True">
+                                        <label for="True">{{ nivel2.opcion1}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="False" name="nivel2" value="False">
+                                        <label for="False">{{ nivel2.opcion2}}</label>
+                                    </div>
+
+                                    {% elif nivel2.tipo == "Rellenar" %}
+                                    <div class="span-col-4"> <strong> {{ nivel2.pregunta }} </strong> </div>
+                                    <div class="span-col-4">{{ nivel2.texto}}</div>
+                                    <div>
+                                        <input type="radio" id="opcion1" name="nivel2" value="opcion1">
+                                        <label for="opcion1">{{ nivel2.opcion1}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion2" name="nivel2" value="opcion2">
+                                        <label for="opcion2">{{ nivel2.opcion2}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion3" name="nivel2" value="opcion3">
+                                        <label for="opcion3">{{ nivel2.opcion3}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion4" name="nivel2" value="opcion4">
+                                        <label for="opcion4">{{ nivel2.opcion4}}</label>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Fin Pregunta 2 -->
+
+                        <!-- Inicio Pregunta 3 -->
+                        <h4 align="left"> <strong> Pregunta 3 </strong></h4>
+                        <div class="grid4">
+                            <div class="jumbotron">
+                                <div class="grid2">
+                                    {% if nivel3.tipo == "Clasica" %}
+                                    <div class="span-col-4"> <strong> {{ nivel3.pregunta }} </strong> </div>
+                                    <div class="span-col-4">{{ nivel3.texto}}</div>
+                                    <div>
+                                        <input type="radio" id="opcion1" name="nivel3" value="opcion1">
+                                        <label for="opcion1">{{ nivel3.opcion1}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion2" name="nivel3" value="opcion2">
+                                        <label for="opcion2">{{ nivel3.opcion2}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion3" name="nivel3" value="opcion3">
+                                        <label for="opcion3">{{ nivel3.opcion3}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion4" name="nivel3" value="opcion4">
+                                        <label for="opcion4">{{ nivel3.opcion4}}</label>
+                                    </div>
+                                    {% elif nivel3.tipo == "Booleana" %}
+                                    <div class="span-col-4"> <strong> {{ nivel3.pregunta }} </strong> </div>
+                                    <div class="span-col-4">{{ nivel3.texto}}</div>
+                                    <div>
+                                        <input type="radio" id="True" name="nivel3" value="True">
+                                        <label for="True">{{ nivel3.opcion1}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="False" name="nivel3" value="False">
+                                        <label for="False">{{ nivel3.opcion2}}</label>
+                                    </div>
+
+                                    {% elif nivel3.tipo == "Rellenar" %}
+                                    <div class="span-col-4"> <strong> {{ nivel3.pregunta }} </strong> </div>
+                                    <div class="span-col-4">{{ nivel3.texto}}</div>
+                                    <div>
+                                        <input type="radio" id="opcion1" name="nivel3" value="opcion1">
+                                        <label for="opcion1">{{ nivel3.opcion1}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion2" name="nivel3" value="opcion2">
+                                        <label for="opcion2">{{ nivel3.opcion2}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion3" name="nivel3" value="opcion3">
+                                        <label for="opcion3">{{ nivel3.opcion3}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion4" name="nivel3" value="opcion4">
+                                        <label for="opcion4">{{ nivel3.opcion4}}</label>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Fin Pregunta nivel 3 -->
+
+                        <!-- Inicio Pregunta Nivel 4 -->
+                        <h4 align="left"> <strong> Pregunta 4 </strong></h4>
+                        <div class="grid4">
+                            <div class="jumbotron">
+                                <div class="grid2">
+                                    {% if nivel4.tipo == "Clasica" %}
+                                    <div class="span-col-4"> <strong> {{ nivel4.pregunta }} </strong> </div>
+                                    <div class="span-col-4">{{ nivel4.texto}}</div>
+                                    <div>
+                                        <input type="radio" id="opcion1" name="nivel4" value="opcion1">
+                                        <label for="opcion1">{{ nivel4.opcion1}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion2" name="nivel4" value="opcion2">
+                                        <label for="opcion2">{{ nivel4.opcion2}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion3" name="nivel4" value="opcion3">
+                                        <label for="opcion3">{{ nivel4.opcion3}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion4" name="nivel4" value="opcion4">
+                                        <label for="opcion4">{{ nivel4.opcion4}}</label>
+                                    </div>
+                                    {% elif nivel4.tipo == "Booleana" %}
+                                    <div class="span-col-4"> <strong> {{ nivel4.pregunta }} </strong> </div>
+                                    <div class="span-col-4">{{ nivel4.texto}}</div>
+                                    <div>
+                                        <input type="radio" id="True" name="nivel4" value="True">
+                                        <label for="True">{{ nivel4.opcion1}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="False" name="nivel4" value="False">
+                                        <label for="False">{{ nivel4.opcion2}}</label>
+                                    </div>
+
+                                    {% elif nivel4.tipo == "Rellenar" %}
+                                    <div class="span-col-4"> <strong> {{ nivel4.pregunta }} </strong> </div>
+                                    <div class="span-col-4">{{ nivel4.texto}}</div>
+                                    <div>
+                                        <input type="radio" id="opcion1" name="nivel4" value="opcion1">
+                                        <label for="opcion1">{{ nivel4.opcion1}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion2" name="nivel4" value="opcion2">
+                                        <label for="opcion2">{{ nivel4.opcion2}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion3" name="nivel4" value="opcion3">
+                                        <label for="opcion3">{{ nivel4.opcion3}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion4" name="nivel4" value="opcion4">
+                                        <label for="opcion4">{{ nivel4.opcion4}}</label>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Fin Pregunta Nivel 4 -->
+
+                        <!-- Inicio Pregunta Nivel 5 -->
+                        <h4 align="left"> <strong> Pregunta 5 </strong></h4>
+                        <div class="grid4">
+                            <div class="jumbotron">
+                                <div class="grid2">
+                                    {% if nivel5.tipo == "Clasica" %}
+                                    <div class="span-col-4"> <strong> {{ nivel5.pregunta }} </strong> </div>
+                                    <div class="span-col-4">{{ nivel5.texto}}</div>
+                                    <div>
+                                        <input type="radio" id="opcion1" name="nivel5" value="opcion1">
+                                        <label for="opcion1">{{ nivel5.opcion1}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion2" name="nivel5" value="opcion2">
+                                        <label for="opcion2">{{ nivel5.opcion2}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion3" name="nivel5" value="opcion3">
+                                        <label for="opcion3">{{ nivel5.opcion3}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion4" name="nivel5" value="opcion4">
+                                        <label for="opcion4">{{ nivel5.opcion4}}</label>
+                                    </div>
+                                    {% elif nivel5.tipo == "Booleana" %}
+                                    <div class="span-col-4"> <strong> {{ nivel5.pregunta }} </strong> </div>
+                                    <div class="span-col-4">{{ nivel5.texto}}</div>
+                                    <div>
+                                        <input type="radio" id="True" name="nivel5" value="True">
+                                        <label for="True">{{ nivel5.opcion1}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="False" name="nivel5" value="False">
+                                        <label for="False">{{ nivel5.opcion2}}</label>
+                                    </div>
+
+                                    {% elif nivel5.tipo == "Rellenar" %}
+                                    <div class="span-col-4"> <strong> {{ nivel5.pregunta }} </strong> </div>
+                                    <div class="span-col-4">{{ nivel5.texto}}</div>
+                                    <div>
+                                        <input type="radio" id="opcion1" name="nivel5" value="opcion1">
+                                        <label for="opcion1">{{ nivel5.opcion1}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion2" name="nivel5" value="opcion2">
+                                        <label for="opcion2">{{ nivel5.opcion2}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion3" name="nivel5" value="opcion3">
+                                        <label for="opcion3">{{ nivel5.opcion3}}</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="opcion4" name="nivel5" value="opcion4">
+                                        <label for="opcion4">{{ nivel5.opcion4}}</label>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Fin Pregunta Nivel 5 -->
+
+                        <!-- Inicio juego emparejar sinonimos -->
+                        <h4 align="center"> Emparejar correctamente las palabras con sus sinonimos</h4>
+                        <div class="grid">
+                            <div>
+                                <h5 align="center"> <strong> {{sinonimo1.palabra}} </strong> </h5>
+                            </div>
+                            <div>
+                                <h5 align="center"> <strong> {{sinonimo3.sininimo_1}} </strong> </h5>
+                            </div>
+                            <div>
+                                <h5 align="center"> <strong> {{sinonimo2.palabra}} </strong> </h5>
+                            </div>
+                            <div>
+                                <h5 align="center"> <strong> {{sinonimo4.sininimo_1}} </strong> </h5>
+                            </div>
+                            <div>
+                                <h5 align="center"> <strong> {{sinonimo3.palabra}} </strong> </h5>
+                            </div>
+                            <div>
+                                <h5 align="center"> <strong> {{sinonimo1.sininimo_1}} </strong> </h5>
+                            </div>
+                            <div>
+                                <h5 align="center"> <strong> {{sinonimo4.palabra}} </strong> </h5>
+                            </div>
+                            <div>
+                                <h5 align="center"> <strong> {{sinonimo2.sininimo_1}} </strong> </h5>
+                            </div>
+                        </div>
+                        <!-- Fin juego emparejar sinonimos -->
+
+                        <!-- Inicio juego emparejar antonimos -->
+                        <h4 align="center">Emparejar correctamente las palabras con sus antonimos</h4>
+                        <div class="grid">
+                            <div>
+                                <h5 align="center"> <strong> {{antonimo1.palabra}} </strong> </h5>
+                            </div>
+                            <div>
+                                <h5 align="center"> <strong> {{antonimo3.antonimo_1}} </strong> </h5>
+                            </div>
+                            <div>
+                                <h5 align="center"> <strong> {{antonimo2.palabra}} </strong> </h5>
+                            </div>
+                            <div>
+                                <h5 align="center"> <strong> {{antonimo4.antonimo_1}} </strong> </h5>
+                            </div>
+                            <div>
+                                <h5 align="center"> <strong> {{antonimo3.palabra}} </strong> </h5>
+                            </div>
+                            <div>
+                                <h5 align="center"> <strong> {{antonimo1.antonimo_1}} </strong> </h5>
+                            </div>
+                            <div>
+                                <h5 align="center"> <strong> {{antonimo4.palabra}} </strong> </h5>
+                            </div>
+                            <div>
+                                <h5 align="center"> <strong> {{antonimo2.antonimo_1}} </strong> </h5>
+                            </div>
+                        </div>
+                        <!-- Fin juego emparejar amtonimos -->
+
+                        <!-- Inicio juego colocar las letras -->
+                        <h4 align="center">Escriba la palabra correcta con las letras que tiene a la izquierda</h4>
+                        <div class="grid">
+                            <div>
+                                <h4 align="center"> <strong> {{random1}} </strong> </h4>
+                            </div>
+                            <div>
+                                <input type="text" name="random1" id="random1" required>
+                            </div>
+                            <div>
+                                <h4 align="center"> <strong> {{random2}} </strong> </h4>
+                            </div>
+                            <div>
+                                <input type="text" name="random2" id="random2" required>
+                            </div>
+                            <div>
+                                <h4 align="center"> <strong> {{random3}} </strong> </h4>
+                            </div>
+                            <div>
+                                <input type="text" name="random3" id="random3" required>
+                            </div>
+                        </div>
+
+                        <!-- Fin juego colocar letras -->
+                        <div>
+                            <br>
+                        </div>
+                        <div class="grid4">
+                            <button type="submit" class="btn btn-success js-btn-step" name="finalizar"> Finalizar </button>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="jumbotron">
+                    <form method="GET" action="{% url 'thanks' %}">
+                        {% csrf_token %}
+                        <div class="grid4">
+                            <h4 align="center">Para salir de la encuesta una vez la haya finalizado pulse el boton de salir </h4>
+                            <button type="submit" class="btn btn-warning js-btn-step" name="salir"> Salir </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+
+    </footer>
+    <!-- /Footer -->
+
+    <!-- preloader -->
+    <div id='preloader'>
+        <div class='preloader'></div>
+    </div>
+    <!-- /preloader -->
+
+    <!-- jQuery Plugins -->
+    <script type="text/javascript" src="{% static 'gestionEncuesta/js/jquery.min.js' %} "></script>
+    <script type="text/javascript" src="{% static 'gestionEncuesta/js/bootstrap.min.js' %} "></script>
+    <script type="text/javascript" src="{% static 'gestionEncuesta/js/main.js' %} "></script>
+    <script>
+        var modal = document.querySelector(".modal");
+        var trigger = document.querySelector(".trigger");
+        var closeButton = document.querySelector(".close-button");
+
+        function toggleModal() {
+            modal.classList.toggle("show-modal");
+        }
+
+        function windowOnClick(event) {
+            if (event.target === modal) {
+                toggleModal();
+            }
+        }
+
+        trigger.addEventListener("click", toggleModal);
+        closeButton.addEventListener("click", toggleModal);
+        window.addEventListener("click", windowOnClick);
+    </script>
+</body>
+
+</html>
